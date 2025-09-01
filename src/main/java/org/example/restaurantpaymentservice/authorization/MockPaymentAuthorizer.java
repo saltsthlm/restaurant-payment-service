@@ -20,8 +20,8 @@ public class MockPaymentAuthorizer implements PaymentAuthorizer {
 
     @Override
     public AuthorizationResult authorize(PaymentCreateRequest req) {
-        BigDecimal amount = req.getAmount();
-        String providerId = req.getProviderPaymentId() == null ? "" : req.getProviderPaymentId();
+        BigDecimal amount = req.amount();
+        String providerId = req.providerPaymentId() == null ? "" : req.providerPaymentId();
 
         if (amount == null) {
             return AuthorizationResult.failure("Missing amount");

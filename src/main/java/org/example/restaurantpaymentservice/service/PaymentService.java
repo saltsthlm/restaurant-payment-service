@@ -25,9 +25,9 @@ public class PaymentService {
 
         Payment payment = Payment.builder()
                 .id(UUID.randomUUID())
-                .orderId(req.getOrderId())
-                .amount(req.getAmount())
-                .providerPaymentId(req.getProviderPaymentId())
+                .orderId(req.orderId())
+                .amount(req.amount())
+                .providerPaymentId(req.providerPaymentId())
                 .status(decision.authorized() ? PaymentStatus.AUTHORIZED : PaymentStatus.FAILED)
                 .failureReason(decision.authorized() ? null : decision.failureReason())
                 .createdAt(Instant.now())

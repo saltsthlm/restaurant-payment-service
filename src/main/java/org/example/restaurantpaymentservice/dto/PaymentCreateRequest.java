@@ -1,15 +1,8 @@
 package org.example.restaurantpaymentservice.dto;
 
 
-import lombok.Data;
-
 import java.math.BigDecimal;
 
-@Data
-public class PaymentCreateRequest {
-    private String orderId;
 
-    private BigDecimal amount;
-
-    private String providerPaymentId;
+public record PaymentCreateRequest(String orderId, BigDecimal amount, String providerPaymentId) {
 }

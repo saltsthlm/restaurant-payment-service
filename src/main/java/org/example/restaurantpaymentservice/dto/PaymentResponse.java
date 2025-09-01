@@ -1,21 +1,13 @@
 package org.example.restaurantpaymentservice.dto;
 
 import lombok.Builder;
-import lombok.Data;
 import org.example.restaurantpaymentservice.enums.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-@Data
 @Builder
-public class PaymentResponse {
-    private UUID id;
-    private String orderId;
-    private BigDecimal amount;
-    private String providerPaymentId;
-    private PaymentStatus status;
-    private Instant createdAt;
-    private String failureReason;
+public record PaymentResponse(UUID id, String orderId, BigDecimal amount, String providerPaymentId,
+                              PaymentStatus status, Instant createdAt, String failureReason) {
 }
