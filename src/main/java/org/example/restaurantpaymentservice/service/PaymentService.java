@@ -25,7 +25,7 @@ public class PaymentService {
                 .amount(req.getAmount())
                 .providerPaymentId(req.getProviderPaymentId())
                 .status(PaymentStatus.PENDING) // starts pending
-                
+
                 .createdAt(Instant.now())
                 .build();
 
