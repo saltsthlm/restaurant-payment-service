@@ -1,6 +1,6 @@
 # 👨‍🍳🍳 restaurant-Payment-service 🍲👨‍🍳
 ## Introduction
-As part of an upskill project in Apache Kafka we will be creating a restaurant kitchen service.
+As part of an upskill project in Apache Kafka we will be creating a restaurant payment service.
 
 We are still in the development stage of this project.
 
