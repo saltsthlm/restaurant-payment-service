@@ -52,6 +52,7 @@ public class PaymentController {
                 .providerPaymentId(p.getProviderPaymentId())
                 .status(p.getStatus())
                 .createdAt(p.getCreatedAt())
+                .failureReason(p.getFailureReason())
                 .build();
     }
 }

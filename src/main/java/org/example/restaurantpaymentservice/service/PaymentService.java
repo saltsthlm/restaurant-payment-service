@@ -1,6 +1,7 @@
 package org.example.restaurantpaymentservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.restaurantpaymentservice.authorization.PaymentAuthorizer;
 import org.example.restaurantpaymentservice.dto.PaymentCreateRequest;
 import org.example.restaurantpaymentservice.enums.PaymentStatus;
 import org.example.restaurantpaymentservice.model.Payment;
@@ -16,16 +17,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentService {
 
+    private final PaymentAuthorizer authorizer;
     private final PaymentRepository repository = new InMemoryPaymentRepository();
 
     public Payment create(PaymentCreateRequest req) {
+        var decision = authorizer.authorize(req);
+
         Payment payment = Payment.builder()
                 .id(UUID.randomUUID())
                 .orderId(req.getOrderId())
                 .amount(req.getAmount())
                 .providerPaymentId(req.getProviderPaymentId())
-                .status(PaymentStatus.PENDING) // starts pending
-
+                .status(decision.authorized() ? PaymentStatus.AUTHORIZED : PaymentStatus.FAILED)
+                .failureReason(decision.authorized() ? null : decision.failureReason())
                 .createdAt(Instant.now())
                 .build();
 
