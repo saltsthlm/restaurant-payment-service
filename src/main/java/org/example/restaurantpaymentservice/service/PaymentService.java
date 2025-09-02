@@ -18,6 +18,7 @@ import java.util.UUID;
 public class PaymentService {
 
     private final PaymentAuthorizer authorizer;
+    private final PaymentProducerService producerService;
     private final PaymentRepository repository = new InMemoryPaymentRepository();
 
     public Payment create(PaymentCreateRequest req) {
@@ -33,7 +34,9 @@ public class PaymentService {
                 .createdAt(Instant.now())
                 .build();
 
-        return repository.save(payment);
+        Payment saved = repository.save(payment);
+        producerService.send(saved);
+        return saved;
     }
 
     public Payment getById(UUID id) {
