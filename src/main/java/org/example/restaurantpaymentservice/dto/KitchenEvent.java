@@ -5,6 +5,7 @@ import lombok.Builder;
 import java.time.Instant;
 import java.util.UUID;
 
+
 @Builder
 public record KitchenEvent(
         UUID eventId,
@@ -25,6 +26,13 @@ public record KitchenEvent(
 
     public enum Reason {
         CLOSED, CAPACITY, ORDER_CANCELED, PAYMENT_FAILED, OPERATOR
+    }
+
+    public boolean validated(){
+        //occured is only in the past but not too faar
+        if (occurredAt.isBefore(Instant.now())) return false;
+
+        return true;
     }
 
 
