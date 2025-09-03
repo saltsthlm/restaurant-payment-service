@@ -17,6 +17,10 @@ public record KitchenEvent(
         Instant occurredAt)    // 2025-09-01T12:34:56Z
 {
     public enum Status {
+        QUEUED,
+        IN_PROGRESS,
+        READY,
+        HANDED_OVER,
         CANCELED
     }
 
