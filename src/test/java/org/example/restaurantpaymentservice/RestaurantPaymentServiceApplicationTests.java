@@ -23,29 +23,67 @@ class RestaurantPaymentServiceApplicationTests {
 
     KitchenEvent queuedEvent;
     KitchenEvent inProgressEvent;
-    KitchenEvent ReadyEvent;
-    KitchenEvent HandedOverEvent;
-    KitchenEvent CanceledEvent;
+    KitchenEvent readyEvent;
+    KitchenEvent handedOverEvent;
+    KitchenEvent canceledEvent;
     List<KitchenEvent> mixedEvents = new ArrayList<>();
-
 
     @BeforeAll
     void setup() {
-        mixedEvents.add(queuedEvent = new KitchenEvent(
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                UUID.randomUUID(),
-                KitchenEvent.Status.QUEUED,
-                KitchenEvent.Stage.PENDING,
-                KitchenEvent.Reason.OPERATOR,
-                Instant.now().minusSeconds(100)
-        ));
+        queuedEvent = KitchenEvent.builder()
+                .eventId(UUID.randomUUID())
+                .ticketId(UUID.randomUUID())
+                .orderId(UUID.randomUUID())
+                .status(KitchenEvent.Status.QUEUED)
+                .stage(KitchenEvent.Stage.PENDING)
+                .occurredAt(Instant.now())
+                .build();
 
+        inProgressEvent = KitchenEvent.builder()
+                .eventId(UUID.randomUUID())
+                .ticketId(UUID.randomUUID())
+                .orderId(UUID.randomUUID())
+                .status(KitchenEvent.Status.IN_PROGRESS)
+                .stage(KitchenEvent.Stage.IN_PROGRESS)
+                .occurredAt(Instant.now())
+                .build();
+
+        readyEvent = KitchenEvent.builder()
+                .eventId(UUID.randomUUID())
+                .ticketId(UUID.randomUUID())
+                .orderId(UUID.randomUUID())
+                .status(KitchenEvent.Status.READY)
+                .stage(KitchenEvent.Stage.READY)
+                .occurredAt(Instant.now())
+                .build();
+
+        handedOverEvent = KitchenEvent.builder()
+                .eventId(UUID.randomUUID())
+                .ticketId(UUID.randomUUID())
+                .orderId(UUID.randomUUID())
+                .status(KitchenEvent.Status.HANDED_OVER)
+                .stage(KitchenEvent.Stage.READY)
+                .occurredAt(Instant.now())
+                .build();
+
+        canceledEvent = KitchenEvent.builder()
+                .eventId(UUID.randomUUID())
+                .ticketId(UUID.randomUUID())
+                .orderId(UUID.randomUUID())
+                .status(KitchenEvent.Status.CANCELED)
+                .stage(KitchenEvent.Stage.ACCEPTED)
+                .reason(KitchenEvent.Reason.OPERATOR) // optional, but nice for canceled
+                .occurredAt(Instant.now())
+                .build();
+
+        mixedEvents.add(queuedEvent);
         mixedEvents.add(inProgressEvent);
-        mixedEvents.add(ReadyEvent);
-        mixedEvents.add(HandedOverEvent);
-        mixedEvents.add(CanceledEvent);
+        mixedEvents.add(readyEvent);
+        mixedEvents.add(handedOverEvent);
+        mixedEvents.add(canceledEvent);
     }
+
+
 
     @Test
     @Disabled("Not yet implemented")
@@ -80,6 +118,7 @@ class RestaurantPaymentServiceApplicationTests {
     @Test
     @Disabled("Not yet implemented")
     void CanceledEventCanceled(){
+
     }
 
     @Test
