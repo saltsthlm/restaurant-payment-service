@@ -1,21 +1,14 @@
 package org.example.restaurantpaymentservice;
-
-import jdk.jshell.spi.ExecutionControl;
 import org.example.restaurantpaymentservice.dto.KitchenEvent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
-
 import java.time.Instant;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static com.jayway.jsonpath.internal.Utils.isTrue;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -84,47 +77,13 @@ class RestaurantPaymentServiceApplicationTests {
     }
 
 
-
+    //make a test for each event that should fail because of nonsensical properties that should not match IE cancelld and in progress at the same time. Should get cought by validator.
     @Test
     @Disabled("Not yet implemented")
     void incorrectEventIsInvalid(){
     }
 
-    @Test
-    @Disabled("Not yet implemented")
-    void correctEventIsCorrect(){
-    }
 
-    @Test
-    @Disabled("Not yet implemented")
-    void queuedEventNotYetHandled(){
-    }
-
-    @Test
-    @Disabled("Not yet implemented")
-    void inProgressEventinProgres(){
-    }
-
-    @Test
-    @Disabled("Not yet implemented")
-    void ReadyEventReady(){
-    }
-
-    @Test
-    @Disabled("Not yet implemented")
-    void HandedOverEventHandedOver(){
-    }
-
-    @Test
-    @Disabled("Not yet implemented")
-    void CanceledEventCanceled(){
-
-    }
-
-    @Test
-    @Disabled("Not yet implemented")
-    void mixedEvents(){
-    }
 
 
 }
