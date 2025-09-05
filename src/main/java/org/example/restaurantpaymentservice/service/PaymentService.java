@@ -5,9 +5,9 @@ import org.example.restaurantpaymentservice.authorization.PaymentAuthorizer;
 import org.example.restaurantpaymentservice.dto.PaymentCreateRequest;
 import org.example.restaurantpaymentservice.enums.PaymentStatus;
 import org.example.restaurantpaymentservice.model.Payment;
-import org.example.restaurantpaymentservice.repository.InMemoryPaymentRepository;
 import org.example.restaurantpaymentservice.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -19,8 +19,9 @@ public class PaymentService {
 
     private final PaymentAuthorizer authorizer;
     private final PaymentProducerService producerService;
-    private final PaymentRepository repository = new InMemoryPaymentRepository();
+    private final PaymentRepository repository;
 
+    @Transactional
     public Payment create(PaymentCreateRequest req) {
         var decision = authorizer.authorize(req);
 
@@ -39,22 +40,19 @@ public class PaymentService {
         return saved;
     }
 
+    @Transactional(readOnly = true)
     public Payment getById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new PaymentNotFoundException(id));
     }
 
+    @Transactional(readOnly = true)
     public List<Payment> getAll(PaymentStatus status) {
-        if (status != null) {
-            return repository.findByStatus(status);
-        }
-        return repository.findAll();
+        return (status != null) ? repository.findByStatus(status) : repository.findAll();
     }
 
     public static class PaymentNotFoundException extends RuntimeException {
-        public PaymentNotFoundException(UUID id) {
-            super("Payment not found: " + id);
-        }
+        public PaymentNotFoundException(UUID id) { super("Payment not found: " + id); }
     }
 }
 
