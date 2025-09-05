@@ -1,5 +1,6 @@
 package org.example.restaurantpaymentservice;
 import org.example.restaurantpaymentservice.dto.KitchenEvent;
+import org.example.restaurantpaymentservice.dto.TicketStatus;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @SpringBootTest
@@ -18,7 +20,12 @@ class RestaurantPaymentServiceApplicationTests {
     KitchenEvent inProgressEvent;
     KitchenEvent readyEvent;
     KitchenEvent handedOverEvent;
-    KitchenEvent canceledEvent;
+    KitchenEvent canceledQueuedEvent;
+    KitchenEvent canceledInProgressEvent;
+    KitchenEvent canceledReadyEvent;
+    KitchenEvent canceledHandedOverEvent;
+
+
     List<KitchenEvent> mixedEvents = new ArrayList<>();
 
     @BeforeAll
@@ -27,8 +34,7 @@ class RestaurantPaymentServiceApplicationTests {
                 .eventId(UUID.randomUUID())
                 .ticketId(UUID.randomUUID())
                 .orderId(UUID.randomUUID())
-                .status(KitchenEvent.Status.QUEUED)
-                .stage(KitchenEvent.Stage.PENDING)
+                .status(new TicketStatus(TicketStatus.OrderStatus.QUEUED, TicketStatus.FoodStatus.QUEUED, Optional.empty()))
                 .occurredAt(Instant.now())
                 .build();
 
@@ -36,36 +42,36 @@ class RestaurantPaymentServiceApplicationTests {
                 .eventId(UUID.randomUUID())
                 .ticketId(UUID.randomUUID())
                 .orderId(UUID.randomUUID())
-                .status(KitchenEvent.Status.IN_PROGRESS)
-                .stage(KitchenEvent.Stage.IN_PROGRESS)
+                .status(new TicketStatus(TicketStatus.OrderStatus.IN_PROGRESS, TicketStatus.FoodStatus.IN_PROGRESS, Optional.empty()))
                 .occurredAt(Instant.now())
                 .build();
+
 
         readyEvent = KitchenEvent.builder()
                 .eventId(UUID.randomUUID())
                 .ticketId(UUID.randomUUID())
-                .orderId(UUID.randomUUID())
-                .status(KitchenEvent.Status.READY)
-                .stage(KitchenEvent.Stage.READY)
+                .status(new TicketStatus(TicketStatus.OrderStatus.READY, TicketStatus.FoodStatus.READY, Optional.empty()))
                 .occurredAt(Instant.now())
                 .build();
 
         handedOverEvent = KitchenEvent.builder()
                 .eventId(UUID.randomUUID())
                 .ticketId(UUID.randomUUID())
-                .orderId(UUID.randomUUID())
-                .status(KitchenEvent.Status.HANDED_OVER)
-                .stage(KitchenEvent.Stage.READY)
+                .status(new TicketStatus(TicketStatus.OrderStatus.HANDED_OVER, TicketStatus.FoodStatus.HANDED_OVER, Optional.empty()))
                 .occurredAt(Instant.now())
                 .build();
 
-        canceledEvent = KitchenEvent.builder()
+        canceledQueuedEvent = KitchenEvent.builder()
                 .eventId(UUID.randomUUID())
                 .ticketId(UUID.randomUUID())
-                .orderId(UUID.randomUUID())
-                .status(KitchenEvent.Status.CANCELED)
-                .stage(KitchenEvent.Stage.ACCEPTED)
-                .reason(KitchenEvent.Reason.OPERATOR) // optional, but nice for canceled
+                .status(new TicketStatus(TicketStatus.OrderStatus.CANCELED, TicketStatus.FoodStatus.QUEUED, Optional.empty()))
+                .occurredAt(Instant.now())
+                .build();
+
+        canceledInProgressEvent = KitchenEvent.builder()
+                .eventId(UUID.randomUUID())
+                .ticketId(UUID.randomUUID())
+                .status(new TicketStatus(TicketStatus.OrderStatus.CANCELED, TicketStatus.FoodStatus.IN_PROGRESS, Optional.empty()))
                 .occurredAt(Instant.now())
                 .build();
 
@@ -73,7 +79,6 @@ class RestaurantPaymentServiceApplicationTests {
         mixedEvents.add(inProgressEvent);
         mixedEvents.add(readyEvent);
         mixedEvents.add(handedOverEvent);
-        mixedEvents.add(canceledEvent);
     }
 
 
