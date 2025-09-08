@@ -9,8 +9,11 @@ import org.example.restaurantpaymentservice.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,6 +41,40 @@ public class PaymentService {
         Payment saved = repository.save(payment);
         producerService.send(saved);
         return saved;
+    }
+
+    @Transactional
+    public Payment refund(UUID paymentId, BigDecimal amount) {
+        // 1. Fetch payment by its ID
+        Payment payment = repository.findById(paymentId)
+                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
+
+        // 2. Ensure it hasn’t already been refunded
+        if (payment.getStatus() == PaymentStatus.REFUNDED) {
+            throw new IllegalStateException("Cannot refund an already refunded payment");
+        }
+
+        // 3. Ensure only authorized payments can be refunded
+        if (payment.getStatus() != PaymentStatus.AUTHORIZED) {
+            throw new IllegalStateException("Only authorized payments can be refunded");
+        }
+
+        // (Optional) validate refund amount <= original payment
+        if (amount.compareTo(payment.getAmount()) > 0) {
+            throw new IllegalArgumentException("Refund amount exceeds original payment");
+        }
+
+        // 4. Update state
+        payment.setStatus(PaymentStatus.REFUNDED);
+        payment.setFailureReason(null); // just in case
+
+        // 5. Persist changes
+        Payment updated = repository.saveAndFlush(payment);
+
+        // 6. Send event
+        producerService.send(updated);
+
+        return updated;
     }
 
     @Transactional(readOnly = true)
