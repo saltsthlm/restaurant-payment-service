@@ -27,7 +27,9 @@ public record TicketStatus(
         CANCELED,     // Order was canceled before completion
     }
 
-
+    public boolean isFinished() {
+        return orderStatus != OrderStatus.CANCELED && orderStatus != OrderStatus.HANDED_OVER;
+    }
 
     public TicketStatus setStatus(OrderStatus newOrderStatus,
                                   FoodStatus newFoodStatus,

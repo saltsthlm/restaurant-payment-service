@@ -12,14 +12,15 @@ public record KitchenEvent(
         Instant occurredAt) {
 
     public void validate() {
-
-
-        if (status.orderStatus().equals(TicketStatus.OrderStatus.CANCELED)){
-
-        }
-        else if ((status.orderStatus().ordinal() != status.foodStatus().ordinal())) {
+        if (status.isFinished() &&(status.orderStatus().ordinal() != status.foodStatus().ordinal())) {
             throw new IllegalStateException(
                     "OrderStatus and FoodStatus mismatch for unfinished event: " + status
+            );
+        }
+
+        if (status.orderStatus() != TicketStatus.OrderStatus.CANCELED && status.cancelReason().isPresent()) {
+            throw new IllegalStateException(
+                    "Non-canceled event cannot have a cancelReason: " + status
             );
         }
 
