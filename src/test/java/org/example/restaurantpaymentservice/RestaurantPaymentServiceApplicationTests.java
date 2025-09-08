@@ -46,7 +46,6 @@ class RestaurantPaymentServiceApplicationTests {
                 .occurredAt(Instant.now())
                 .build();
 
-
         readyEvent = KitchenEvent.builder()
                 .eventId(UUID.randomUUID())
                 .ticketId(UUID.randomUUID())
@@ -75,10 +74,50 @@ class RestaurantPaymentServiceApplicationTests {
                 .occurredAt(Instant.now())
                 .build();
 
+        canceledReadyEvent = KitchenEvent.builder()
+                .eventId(UUID.randomUUID())
+                .ticketId(UUID.randomUUID())
+                .status(new TicketStatus(TicketStatus.OrderStatus.CANCELED, TicketStatus.FoodStatus.READY, Optional.empty()))
+                .occurredAt(Instant.now())
+                .build();
+
+        //This might not be needed. Why would you cancel something that is complete?
+        canceledHandedOverEvent = KitchenEvent.builder()
+                .eventId(UUID.randomUUID())
+                .ticketId(UUID.randomUUID())
+                .status(new TicketStatus(TicketStatus.OrderStatus.CANCELED, TicketStatus.FoodStatus.HANDED_OVER, Optional.empty()))
+                .occurredAt(Instant.now())
+                .build();
+
         mixedEvents.add(queuedEvent);
         mixedEvents.add(inProgressEvent);
         mixedEvents.add(readyEvent);
         mixedEvents.add(handedOverEvent);
+        mixedEvents.add(canceledQueuedEvent);
+        mixedEvents.add(canceledReadyEvent);
+        mixedEvents.add(canceledHandedOverEvent);
+        for (TicketStatus.OrderStatus orderStatus : TicketStatus.OrderStatus.values()) {
+            for (TicketStatus.FoodStatus foodStatus : TicketStatus.FoodStatus.values()) {
+                mixedEvents.add(KitchenEvent.builder()
+                        .eventId(UUID.randomUUID())
+                        .ticketId(UUID.randomUUID())
+                        .orderId(UUID.randomUUID())
+                        .status(new TicketStatus(orderStatus, foodStatus, Optional.empty()))
+                        .occurredAt(Instant.now())
+                        .build());
+
+                    for (TicketStatus.Reason reason : TicketStatus.Reason.values()) {
+                        mixedEvents.add(KitchenEvent.builder()
+                                .eventId(UUID.randomUUID())
+                                .ticketId(UUID.randomUUID())
+                                .orderId(UUID.randomUUID())
+                                .status(new TicketStatus(orderStatus, foodStatus, Optional.of(reason)))
+                                .occurredAt(Instant.now())
+                                .build());
+                    }
+            }
+        }
+
     }
 
 
