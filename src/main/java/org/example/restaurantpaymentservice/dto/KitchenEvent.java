@@ -1,11 +1,7 @@
 package org.example.restaurantpaymentservice.dto;
-
-import jakarta.annotation.Nullable;
 import lombok.Builder;
-
 import java.time.Instant;
 import java.util.UUID;
-
 
 @Builder
 public record KitchenEvent(
@@ -15,18 +11,24 @@ public record KitchenEvent(
         TicketStatus status,
         Instant occurredAt) {
 
+    public void validate() {
 
 
+        if (status.orderStatus().equals(TicketStatus.OrderStatus.CANCELED)){
 
-    public boolean validated() {
-        if ((status.orderStatus().ordinal() != status.foodStatus().ordinal()) && !status.isFinished()) {
-            return false;
         }
-        if (occurredAt.isBefore(Instant.now())) return false;
+        else if ((status.orderStatus().ordinal() != status.foodStatus().ordinal())) {
+            throw new IllegalStateException(
+                    "OrderStatus and FoodStatus mismatch for unfinished event: " + status
+            );
+        }
 
-        return true;
+        if (occurredAt.isAfter(Instant.now())) {
+            throw new IllegalStateException(
+                    "KitchenEvent cannot occur in the future: " + occurredAt
+            );
+        }
     }
-
 
 }
 

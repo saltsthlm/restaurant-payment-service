@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
+
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RestaurantPaymentServiceApplicationTests {
@@ -23,10 +27,10 @@ class RestaurantPaymentServiceApplicationTests {
     KitchenEvent canceledQueuedEvent;
     KitchenEvent canceledInProgressEvent;
     KitchenEvent canceledReadyEvent;
-    KitchenEvent canceledHandedOverEvent;
-
 
     List<KitchenEvent> mixedEvents = new ArrayList<>();
+    List<KitchenEvent> expectedEvents = new ArrayList<>();
+
 
     @BeforeAll
     void setup() {
@@ -81,21 +85,14 @@ class RestaurantPaymentServiceApplicationTests {
                 .occurredAt(Instant.now())
                 .build();
 
-        //This might not be needed. Why would you cancel something that is complete?
-        canceledHandedOverEvent = KitchenEvent.builder()
-                .eventId(UUID.randomUUID())
-                .ticketId(UUID.randomUUID())
-                .status(new TicketStatus(TicketStatus.OrderStatus.CANCELED, TicketStatus.FoodStatus.HANDED_OVER, Optional.empty()))
-                .occurredAt(Instant.now())
-                .build();
-
-        mixedEvents.add(queuedEvent);
-        mixedEvents.add(inProgressEvent);
-        mixedEvents.add(readyEvent);
-        mixedEvents.add(handedOverEvent);
-        mixedEvents.add(canceledQueuedEvent);
-        mixedEvents.add(canceledReadyEvent);
-        mixedEvents.add(canceledHandedOverEvent);
+        //maybe also add cancelledHanded over event discuss with kitchen team
+        expectedEvents.add(queuedEvent);
+        expectedEvents.add(inProgressEvent);
+        expectedEvents.add(readyEvent);
+        expectedEvents.add(handedOverEvent);
+        expectedEvents.add(canceledQueuedEvent);
+        expectedEvents.add(canceledReadyEvent);
+        expectedEvents.add(canceledInProgressEvent);
         for (TicketStatus.OrderStatus orderStatus : TicketStatus.OrderStatus.values()) {
             for (TicketStatus.FoodStatus foodStatus : TicketStatus.FoodStatus.values()) {
                 mixedEvents.add(KitchenEvent.builder()
@@ -122,10 +119,31 @@ class RestaurantPaymentServiceApplicationTests {
 
 
     //make a test for each event that should fail because of nonsensical properties that should not match IE cancelld and in progress at the same time. Should get cought by validator.
+
     @Test
-    @Disabled("Not yet implemented")
-    void incorrectEventIsInvalid(){
+    void expectedEventsAreValid() {
+        for (KitchenEvent event : expectedEvents) {
+            assertDoesNotThrow(event::validate,
+                    "Expected event to be valid, but validate() threw: " + event);
+        }
     }
+
+    @Test
+    void unexpectedEventsAreInvalid() {
+        for (KitchenEvent randEvent : mixedEvents) {
+            boolean isExpected = expectedEvents.stream()
+                    .anyMatch(validEvent -> validEvent.status().equals(randEvent.status()));
+            if (isExpected) continue;
+
+            IllegalStateException ex = assertThrows(IllegalStateException.class,
+                    randEvent::validate,
+                    "Expected event to be invalid and throw, but it did not: " + randEvent);
+
+            // Print the actual error
+            System.out.println("Caught expected exception: " + ex.getMessage());
+        }
+    }
+
 
 
 
