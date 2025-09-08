@@ -20,14 +20,14 @@ public class KafkaConsumerService {
         try {
             KitchenEvent event = mapper.readValue(inMessage, KitchenEvent.class);
             //validate message data
-            if (event.validated()) System.out.println( event+" event message validated");
+            event.validate();
+            System.out.println( event+" event message validated");
 
         } catch (Exception e) {
             System.err.println("Bad message, could not parse: " + inMessage);
             //if bad reject message
             // send to invalid-messages topic/table
             //refund payment
-
         }
 
 

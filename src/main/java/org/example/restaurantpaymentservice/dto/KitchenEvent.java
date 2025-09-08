@@ -1,44 +1,35 @@
 package org.example.restaurantpaymentservice.dto;
-
 import lombok.Builder;
-
 import java.time.Instant;
 import java.util.UUID;
-
 
 @Builder
 public record KitchenEvent(
         UUID eventId,
         UUID ticketId,
         UUID orderId,
-        Status status,   // CANCELED
-        Stage stage,     // PENDING | ACCEPTED | IN_PROGRESS | READY
-        Reason reason,   // CLOSED | CAPACITY | ORDER_CANCELED | PAYMENT_FAILED | OPERATOR
-        Instant occurredAt)    // 2025-09-01T12:34:56Z
-{
-    public enum Status {
-        QUEUED,
-        IN_PROGRESS,
-        READY,
-        HANDED_OVER,
-        CANCELED
+        TicketStatus status,
+        Instant occurredAt) {
+
+    public void validate() {
+        if (status.isFinished() &&(status.orderStatus().ordinal() != status.foodStatus().ordinal())) {
+            throw new IllegalStateException(
+                    "OrderStatus and FoodStatus mismatch for unfinished event: " + status
+            );
+        }
+
+        if (status.orderStatus() != TicketStatus.OrderStatus.CANCELED && status.cancelReason().isPresent()) {
+            throw new IllegalStateException(
+                    "Non-canceled event cannot have a cancelReason: " + status
+            );
+        }
+
+        if (occurredAt.isAfter(Instant.now())) {
+            throw new IllegalStateException(
+                    "KitchenEvent cannot occur in the future: " + occurredAt
+            );
+        }
     }
-
-    public enum Stage {
-        PENDING, ACCEPTED, IN_PROGRESS, READY
-    }
-
-    public enum Reason {
-        CLOSED, CAPACITY, ORDER_CANCELED, PAYMENT_FAILED, OPERATOR
-    }
-
-    public boolean validated(){
-        //occured is only in the past but not too faar
-        if (occurredAt.isBefore(Instant.now())) return false;
-
-        return true;
-    }
-
 
 }
 
