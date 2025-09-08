@@ -14,7 +14,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RestaurantPaymentServiceApplicationTests {
 
@@ -139,9 +138,4 @@ class RestaurantPaymentServiceApplicationTests {
                 System.out.println("Caught expected exception: " + ex.getMessage());}
         }
     }
-
-
-
-
-
 }
