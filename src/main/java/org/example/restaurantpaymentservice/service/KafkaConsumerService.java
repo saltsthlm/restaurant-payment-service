@@ -2,6 +2,7 @@ package org.example.restaurantpaymentservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.example.restaurantpaymentservice.dto.KitchenEvent;
 import org.example.restaurantpaymentservice.dto.OrderEvent;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,27 +19,36 @@ public class KafkaConsumerService {
 
     boolean dbStatusFilter(OrderEvent orderEvent){
         //take message id and check aginst db if it matches anything and has FAILED or REFUNDED as status ignore them.
-
+        return  true;
     }
 
-    @KafkaListener(id = "Order", topics = "Order.canceled")
-    void listen(String inMessage) throws JsonProcessingException {
+    @KafkaListener(id = "Order", topics = {"Order.canceled","Kitchen.rejected"})
+    public void listen(ConsumerRecord<String, String> record) throws JsonProcessingException {
         ///read message
-        System.out.println("Kafka kitchen message: "+inMessage);
-        //convert message to some sort of dto
-        try {
-            OrderEvent event = mapper.readValue(inMessage, OrderEvent.class);
-            event.validate();
-            System.out.println( event+" event message validated");
-
-
-        } catch (Exception e) {
-            System.err.println("Bad message, could not parse: " + inMessage);
-            //if bad reject message
-            // send to invalid-messages topic/table
-            //refund payment
+        System.out.println("Kafka kitchen message: "+record.value());
+        ///switch and handle the correct case
+        switch (record.topic()) {
+            case "Order.canceled":
+                OrderEvent orderEvent = mapper.readValue(record.value(), OrderEvent.class);
+                handleOrderCanceled(orderEvent);
+                break;
+            case "Kitchen.rejected":
+                KitchenEvent kitchenEvent = mapper.readValue(record.value(), KitchenEvent.class);
+                handleKitchenRejected(kitchenEvent);
+                break;
+            default:
+                System.out.println("Unknown topic: " + record.topic());
         }
+    }
 
 
+    private void handleOrderCanceled(OrderEvent event) {
+        System.out.println("Processing Order.canceled: " + event);
+        // business logic here
+    }
+
+    private void handleKitchenRejected(KitchenEvent event) {
+        System.out.println("Processing Kitchen.rejected: " + event);
+        // business logic here
     }
 }
