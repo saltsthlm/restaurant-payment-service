@@ -22,7 +22,7 @@ public class PaymentController {
 
     @PostMapping
     public ResponseEntity<PaymentResponse> create(@RequestBody PaymentCreateRequest request) {
-        Payment saved = paymentService.create(request);
+        Payment saved = paymentService.authorizePayment(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
 
@@ -47,7 +47,7 @@ public class PaymentController {
     private PaymentResponse toResponse(Payment p) {
         return PaymentResponse.builder()
                 .id(p.getId())
-                .orderId(p.getOrderId())
+                .orderId(String.valueOf(p.getOrderId()))
                 .amount(p.getAmount())
                 .providerPaymentId(p.getProviderPaymentId())
                 .status(p.getStatus())
