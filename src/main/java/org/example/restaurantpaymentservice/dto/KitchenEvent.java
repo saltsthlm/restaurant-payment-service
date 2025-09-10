@@ -1,15 +1,19 @@
 package org.example.restaurantpaymentservice.dto;
 import lombok.Builder;
+import org.example.restaurantpaymentservice.enums.OrderStatus;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public record KitchenEvent(
+public record KitchenEvent (
         UUID eventId,
         UUID ticketId,
         UUID orderId,
         TicketStatus status,
-        Instant occurredAt) {
+        Instant occurredAt) implements Event  {
 
     public void validate() {
         if (status.isFinished() &&(status.orderStatus().ordinal() != status.foodStatus().ordinal())) {
@@ -32,7 +36,20 @@ public record KitchenEvent(
     }
 
 
+    @Override
+    public UUID getOrderId() {
+        return orderId;
+    }
 
+    @Override
+    public BigDecimal getPaymentAmount() {
+        return null;
+    }
+
+    @Override
+    public OrderStatus getOrderStatus() {
+        return null;
+    }
 }
 
 

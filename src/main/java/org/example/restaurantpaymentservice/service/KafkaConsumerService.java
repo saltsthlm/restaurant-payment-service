@@ -3,9 +3,14 @@ package org.example.restaurantpaymentservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.example.restaurantpaymentservice.dto.Event;
 import org.example.restaurantpaymentservice.dto.KitchenEvent;
 import org.example.restaurantpaymentservice.dto.OrderEvent;
 import org.springframework.kafka.annotation.KafkaListener;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.UUID;
 
 public class KafkaConsumerService {
     private final ObjectMapper mapper;
@@ -17,12 +22,16 @@ public class KafkaConsumerService {
     }
 
 
-    boolean dbStatusFilter(OrderEvent orderEvent){
-        //take message id and check aginst db if it matches anything and has FAILED or REFUNDED as status ignore them.
-        return  true;
+    boolean dbStatusFilter(Event eventMessage){
+        //take message id and
+        UUID eventId= eventMessage.getOrderId();
+        // check aginst db if it matches anything and has FAILED or REFUNDED as status ignore them.
+        BigDecimal payment = eventMessage.getPaymentAmount();
+        paymentService.refund(eventId,payment);
+        return true;
     }
 
-    @KafkaListener(id = "Order", topics = {"Order.canceled","Kitchen.rejected"})
+    @KafkaListener(id = "Order", topics = {"order.canceled", "order.canceled.v1"})
     public void listen(ConsumerRecord<String, String> record) throws JsonProcessingException {
         ///read message
         System.out.println("Kafka kitchen message: "+record.value());
