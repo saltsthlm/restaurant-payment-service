@@ -1,36 +1,24 @@
 package org.example.restaurantpaymentservice.dto;
 
-
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.example.restaurantpaymentservice.enums.OrderStatus;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 public record OrderEvent(
-    @NotNull UUID orderId,
-    @NotNull OrderStatus orderStatus,
-    @NotNull Instant createdAt,
-    @Min(0) double totalPrice,
-    @NotNull @NotEmpty List<OrderEventItem> items
-) implements Event {
-    @Override
-    public UUID getOrderId() {
-        return null;
-    }
-
-    @Override
-    public BigDecimal getPaymentAmount() {
-        return BigDecimal.valueOf(totalPrice);
-    }
-
-    @Override
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
+        @JsonProperty("eventId") UUID eventId,
+        @JsonProperty("orderId") UUID orderId,
+        @JsonProperty("orderStatus") OrderStatus orderStatus,
+        @JsonProperty("createdAt") Instant createdAt,
+        @JsonProperty("totalPrice") double totalPrice,
+        @JsonProperty("items") List<OrderItem> items
+) {
+    public record OrderItem(
+            @JsonProperty("id") UUID id,
+            @JsonProperty("itemId") int itemId,
+            @JsonProperty("quantity") int quantity,
+            @JsonProperty("price") double price
+    ) {}
 }
