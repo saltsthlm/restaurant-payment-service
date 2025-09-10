@@ -19,7 +19,7 @@ public class OrderCreatedConsumer {
     private final ObjectMapper mapper;
 
 
-    @KafkaListener(id = "order", topics = "order.created")
+    @KafkaListener(topics = "order.created")
     void listen(String inMessage) throws JsonProcessingException {
         try {
             ObjectReader reader = mapper
