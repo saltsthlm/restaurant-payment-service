@@ -6,6 +6,7 @@ import org.example.restaurantpaymentservice.enums.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,12 +21,12 @@ public class Payment {
     private UUID id;
 
     @Column(name = "order_id", nullable = false)
-    private String orderId;
+    private UUID orderId;
 
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(name = "provider_payment_id", nullable = false)
+    @Column(name = "provider_payment_id")
     private String providerPaymentId;
 
     @Enumerated(EnumType.STRING)
@@ -37,5 +38,13 @@ public class Payment {
 
     @Column(name = "failure_reason")
     private String failureReason;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinTable(
+            name = "payment_item",
+            joinColumns = @JoinColumn(name = "payment_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
+    private List<Item> items;
 }
 

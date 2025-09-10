@@ -3,11 +3,14 @@ package org.example.restaurantpaymentservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.restaurantpaymentservice.dto.PaymentEvent;
+import org.example.restaurantpaymentservice.dto.PaymentItemDto;
+import org.example.restaurantpaymentservice.model.Item;
 import org.example.restaurantpaymentservice.model.Payment;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -74,6 +77,21 @@ public class PaymentProducerService {
                 .failureReason(p.getFailureReason())
                 .createdAt(p.getCreatedAt())
                 .occurredAt(Instant.now())
+                .items(
+                        (p.getItems() == null) ? List.of()
+                                : p.getItems().stream()
+                                .map(this::toItemDto)
+                                .toList()
+                )
+                .build();
+    }
+
+    private PaymentItemDto toItemDto(Item it) {
+        return PaymentItemDto.builder()
+                .id(it.getId())
+                .itemId(it.getItemId())
+                .quantity(it.getQuantity())
+                .price(it.getPrice())
                 .build();
     }
 }
