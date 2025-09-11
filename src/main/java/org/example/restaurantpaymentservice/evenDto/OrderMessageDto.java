@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Builder
 public record OrderMessageDto (
+        UUID eventId,
         UUID orderId,
         OrderStatus orderStatus,
         Instant createdAt,

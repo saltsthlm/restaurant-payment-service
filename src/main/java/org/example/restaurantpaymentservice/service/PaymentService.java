@@ -113,7 +113,7 @@ public class PaymentService {
     public Payment createPendingFromOrder(OrderMessageDto order) {
         var items = order.items().stream()
                 .map(i -> Item.builder()
-                        .id(i.id())                // keep producer's UUIDs
+                        .id(UUID.randomUUID())
                         .itemId(i.itemId())
                         .quantity(i.quantity())
                         .price(i.price())
