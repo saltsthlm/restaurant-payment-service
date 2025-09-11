@@ -52,6 +52,5 @@ public class OrderCreatedConsumer {
         } catch (JsonProcessingException e) {
             log.error("Failed to parse order.created payload. Message: {}\nError: {}", record, e.getMessage(), e);
         }
-
     }
 }
