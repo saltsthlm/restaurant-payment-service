@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:16
     container_name: pg-payment
-    ports: [ "5435:5432" ]
+    ports: [ "5434:5432" ]
     environment:
       POSTGRES_USER: payment
       POSTGRES_PASSWORD: payment
