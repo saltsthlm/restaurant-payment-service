@@ -15,13 +15,13 @@ import java.time.Instant;
 
 @Component
 @Slf4j
-public class KafkaConsumerService {
+public class OrderCancelConsumer {
     private final ObjectMapper mapper;
     private final PaymentService paymentService;
     private final ConsumedEventRepository consumedEventRepository;
 
 
-    public KafkaConsumerService(ObjectMapper mapper, PaymentService paymentService, ConsumedEventRepository consumedEventRepository) {
+    public OrderCancelConsumer(ObjectMapper mapper, PaymentService paymentService, ConsumedEventRepository consumedEventRepository) {
         this.mapper = mapper;
         this.paymentService = paymentService;
         this.consumedEventRepository = consumedEventRepository;
