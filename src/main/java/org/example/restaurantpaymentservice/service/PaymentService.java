@@ -14,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -62,7 +60,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public Payment refund(UUID paymentId, BigDecimal amount) {
+    public void refund(UUID paymentId, BigDecimal amount) {
         // 1. Fetch payment by its ID
         Payment payment = repository.findById(paymentId)
                 .orElseThrow(() -> new PaymentNotFoundException(paymentId));
@@ -77,9 +75,11 @@ public class PaymentService {
             throw new IllegalStateException("Only authorized payments can be refunded");
         }
 
-        // (Optional) validate refund amount <= original payment
         if (amount.compareTo(payment.getAmount()) > 0) {
             throw new IllegalArgumentException("Refund amount exceeds original payment");
+        }
+        if (amount.compareTo(payment.getAmount()) < 0) {
+            throw new IllegalArgumentException("Refund amount is less than original payment");
         }
 
         // 4. Update state
@@ -92,7 +92,6 @@ public class PaymentService {
         // 6. Send event
         producerService.send(updated);
 
-        return updated;
     }
 
     @Transactional(readOnly = true)

@@ -38,8 +38,13 @@ public class OrderCreatedConsumer {
                     .readerFor(OrderMessageDto.class)
                     .without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
+<<<<<<< Updated upstream
             OrderMessageDto order = reader.readValue(json);
 
+=======
+            String json = mapper.readValue(inMessage, String.class);
+            OrderMessageDto order = reader.readValue(json);
+>>>>>>> Stashed changes
             if (consumedEventRepository.existsById(order.eventId())) {
                 log.info("Duplicate event detected, skipping.");
                 return;
