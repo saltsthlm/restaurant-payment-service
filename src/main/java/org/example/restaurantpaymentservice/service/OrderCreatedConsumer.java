@@ -27,7 +27,7 @@ public class OrderCreatedConsumer {
 
     @Transactional
     @KafkaListener(topics = "order.created")
-    void listen(String inMessage) throws JsonProcessingException {
+    void listen(String inMessage) {
         try {
             ObjectReader reader = mapper
                     .readerFor(OrderMessageDto.class)
