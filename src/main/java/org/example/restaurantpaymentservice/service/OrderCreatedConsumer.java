@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class OrderCreatedConsumer {
 
     private final ObjectMapper mapper;
+    private final PaymentService paymentService;
 
 
     @KafkaListener(topics = "order.created")
@@ -27,6 +28,7 @@ public class OrderCreatedConsumer {
                     .without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
             OrderMessageDto order = reader.readValue(inMessage);
+            paymentService.createPendingFromOrder(order);
 
 
         } catch (JsonProcessingException e) {
