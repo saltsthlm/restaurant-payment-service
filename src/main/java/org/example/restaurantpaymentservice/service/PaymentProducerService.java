@@ -18,9 +18,9 @@ import java.util.UUID;
 @Slf4j
 public class PaymentProducerService {
 
-    public static final String TOPIC_AUTHORIZED = "Payment.authorized";
-    public static final String TOPIC_FAILED     = "Payment.failed";
-    public static final String TOPIC_REFUND     = "Payment.refund";
+    public static final String TOPIC_AUTHORIZED = "payment.authorized";
+    public static final String TOPIC_FAILED     = "payment.failed";
+    public static final String TOPIC_REFUND     = "payment.refund";
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 

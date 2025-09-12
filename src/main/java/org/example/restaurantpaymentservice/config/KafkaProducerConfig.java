@@ -43,17 +43,17 @@ public class KafkaProducerConfig {
     // Might be unnecessary once the docker-compose is made
     @Bean
     public NewTopic paymentAuthorizedTopic() {
-        return new NewTopic("Payment.authorized", 1, (short) 1);
+        return new NewTopic("payment.authorized", 1, (short) 1);
     }
 
     @Bean
     public NewTopic paymentFailedTopic() {
-        return new NewTopic("Payment.failed", 1, (short) 1);
+        return new NewTopic("payment.failed", 1, (short) 1);
     }
 
     @Bean
     public NewTopic paymentRefundTopic() {
-        return new NewTopic("Payment.refund", 1, (short) 1);
+        return new NewTopic("payment.refund", 1, (short) 1);
     }
 }
 
