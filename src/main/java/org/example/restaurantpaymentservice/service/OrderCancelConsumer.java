@@ -1,7 +1,9 @@
 package org.example.restaurantpaymentservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.example.restaurantpaymentservice.dto.OrderEvent;
@@ -37,8 +39,11 @@ public class OrderCancelConsumer {
                 record.value()
         );
 
-        String json = mapper.readValue(record.value(), String.class);
-        OrderEvent event = mapper.readValue(json, OrderEvent.class);
+        String json = record.value();
+        ObjectReader reader = mapper
+            .readerFor(OrderEvent.class)
+            .without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        OrderEvent event = reader.readValue(json);
 
         if (consumedEventRepository.existsById(event.eventId())) {
             log.info("Duplicate event detected, skipping.");

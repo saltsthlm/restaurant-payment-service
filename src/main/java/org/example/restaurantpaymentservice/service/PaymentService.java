@@ -87,7 +87,7 @@ public class PaymentService {
         payment.setFailureReason(null); // just in case
 
         // 5. Persist changes
-        Payment updated = repository.saveAndFlush(payment);
+        Payment updated = repository.save(payment);
 
         // 6. Send event
         producerService.send(updated);
